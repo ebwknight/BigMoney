@@ -71,9 +71,14 @@ def RSI(start_date, end_date, symbols, window_size):
     print(rsi)
     return rsi
 
+def x_day_low(start_date, end_date, symbols, window_size):
+    prices = get_data(start_date, end_date, symbols)
+    print(prices)
+    return prices.rolling(5, min_periods=1).min()
+
 def main():
-    rsi = RSI('2018-01-01','2019-12-31',['AAPL','JPM','TSLA'], 14)
-    #print(sma)
+    lows = x_day_low('2018-01-01','2019-12-31',['AAPL','JPM','TSLA'], 14)
+    print(lows)
   
 if __name__=="__main__":
     main()
