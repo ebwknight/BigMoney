@@ -57,20 +57,20 @@ class OracleStrategy:
                 prices.loc[index, 'Cash'] = prices.loc[prev_index, 'Cash']
                 prices.loc[index, 'Holdings'] = prices.loc[prev_index, 'Holdings']
             if prices.loc[index, 'Signal'] > 0:
-                if (prices.loc[index, 'Cash'] / prices.loc[index, symbol]) >= 2000:
+                if (prices.loc[index, 'Holdings'] == -1000):
                     prices.loc[index,'Trades'] = 2000
                     prices.loc[index,'Cash'] -= (2000 * prices.loc[index, symbol])
                     prices.loc[index,'Holdings'] += 2000
-                elif (prices.loc[index, 'Cash'] / prices.loc[index, symbol]) >= 1000:
+                elif (prices.loc[index, 'Holdings'] == 0):
                     prices.loc[index,'Trades'] = 1000
                     prices.loc[index,'Cash'] -= (1000 * prices.loc[index, symbol])
                     prices.loc[index,'Holdings'] += 1000
             else:
-                if prices.loc[index, 'Holdings'] >= 2000:
+                if prices.loc[index, 'Holdings'] == 1000:
                     prices.loc[index,'Trades'] = -2000
                     prices.loc[index,'Cash'] += (2000 * prices.loc[index, symbol])
                     prices.loc[index,'Holdings'] -= 2000
-                elif prices.loc[index, 'Holdings'] >= 1000:
+                elif prices.loc[index, 'Holdings'] == 0:
                     prices.loc[index,'Trades'] = -1000
                     prices.loc[index,'Cash'] += (1000 * prices.loc[index, symbol])
                     prices.loc[index,'Holdings'] -= 1000
@@ -84,7 +84,8 @@ class OracleStrategy:
 
         prices['Daily Value'] = prices['Cash'] + (prices['Holdings'] * prices[symbol])
         baseline['Daily Value'] = baseline['Cash'] + (baseline['Holdings'] * baseline[symbol])
-        #print("Oracle: " + str(prices))
+        print("Oracle: ")
+        print(prices.to_string())
         #print("Baseline: " + str(baseline))
 
         #plot

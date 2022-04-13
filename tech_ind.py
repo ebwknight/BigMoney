@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def get_data(start_date, end_date, symbols, column_name = 'Adj Close', include_spy=True):
 
@@ -69,12 +70,25 @@ def RSI(start_date, end_date, symbols, window_size):
     # Inf results mean down_loss was 0.  Those should be RSI 100.
     rsi[rsi == np.inf] = 100
     print(rsi)
+    figure, axis = plt.subplots(2, 1)
+    axis[0].plot(prices[symbols[0]])
+    axis[0].set_title("Normal Prices")
+    axis[1].plot(rsi[symbols[0]])
+    axis[1].set_title("RSI")
+    plt.savefig('RSI')
     return rsi
 
 def x_day_low(start_date, end_date, symbols, window_size):
     prices = get_data(start_date, end_date, symbols)
-    print(prices)
-    return prices.rolling(5, min_periods=1).min()
+    lows = prices.rolling(window_size, min_periods=1).min()
+    figure, axis = plt.subplots(2, 1)
+    axis[0].plot(prices[symbols[0]])
+    axis[0].set_title("Normal Prices")
+    axis[1].plot(lows[symbols[0]])
+    axis[1].set_title("5 Day Lows")
+    plt.savefig('X Day Low')
+    return lows
+
 
 def main():
     lows = x_day_low('2018-01-01','2019-12-31',['AAPL','JPM','TSLA'], 14)
