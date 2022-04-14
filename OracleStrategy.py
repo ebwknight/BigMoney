@@ -32,7 +32,7 @@ class OracleStrategy:
         # Defined so you can call it with any parameters and it will just do nothing.
         pass
 
-    def test(self, start_date = '2018-01-01', end_date = '2019-12-31', symbol = 'DIS', starting_cash = 200000):
+    def test(self, start_date = '2008-01-01', end_date = '2009-12-31', symbol = 'DIS', starting_cash = 200000):
         # Inputs represent the date range to consider, the single stock to trade, and the starting portfolio value.
         #
         # Return a date-indexed DataFrame with a single column containing the desired trade for that date.
@@ -86,7 +86,7 @@ class OracleStrategy:
         baseline['Daily Value'] = baseline['Cash'] + (baseline['Holdings'] * baseline[symbol])
         print("Oracle: ")
         print(prices.to_string())
-        #print("Baseline: " + str(baseline))
+        print("Baseline: " + str(baseline))
 
         #plot
         plt.plot(prices['Daily Value'], 'r-', label='Oracle Trader')

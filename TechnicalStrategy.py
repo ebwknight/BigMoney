@@ -8,6 +8,8 @@ from readData import get_data
 from tech_ind import *
 from backtest import *
 
+#include MACD
+
 class TechnicalStrategy:
     def __init__(self, *params, **kwparams):
         # Defined so you can call it with any parameters and it will just do nothing.
@@ -29,49 +31,32 @@ def build_trades (symbols, start_date, end_date, window_size):
 
   print (f"Constructing 5 Day low and RSI from {start_date} to {end_date}.")
 
-  # Read all the relevant price data (plus SPY) into a DataFrame.
-  price = get_data(start_date, end_date, symbols)
-
-  # Add SPY to the symbol list for convenience.
-  #symbols.append('SPY')
-
+  # Read all the relevant s data (plus SPY) into a DataFrame.
+  prices = get_data(start_date, end_date, symbols)
+  spy_prices = get_data(start_date, end_date, ['SPY'])
 
   ### Calculate SMA-Five day low and RSI for the entire date range for all symbols.
-  fdl = x_day_low(start_date, end_date, symbols, window_size)
-  rsi = RSI(start_date, end_date, symbols, window_size)
-  symbols.remove('SPY')
-
+  rsi = RSI(start_date, end_date, prices, 2)
+  spy_rsi = RSI(start_date, end_date, spy_prices, window_size)
+  macd, signal, histogram = MACD(start_date, end_date, prices, window_size)
+  fdl = x_day_low(start_date, end_date, prices, 5)
+  bbp = BBands(start_date, end_date, prices, window_size)
+  sma_ratio = prices / SMA(start_date, end_date, prices, window_size)
+  spy_sma_ratio = spy_prices / SMA(start_date, end_date, spy_prices, window_size)
   ### Use the three indicators to make some kind of trading decision for each day.
 
   # Trades starts as a NaN array of the same shape/index as price.
-  trades = price.copy()
+  trades = prices.copy()
   trades.loc[:,:] = np.NaN
 
   # Apply our entry order conditions all at once.  This represents our TARGET SHARES
   # at this moment in time, not an actual order.
-  ''' & (bbp < 0) & (rsi < 30) & (spy_rsi > 30)'''
-  print(fdl)
-  print(price)
-  trades[(price <= fdl)] = 1000
+
+  trades[(macd > signal) & (bbp < 0.25)] = 100
   #trades[(sma > 1.05) & (bbp > 1) & (rsi > 70) & (spy_rsi < 70)] = -100
 
 # Apply our exit order conditions all at once.  Again, this represents TARGET SHARES.
-  trades[(rsi > 50)] = 0
-#if there is a time stop of five days if the sell criterium is not triggered.
-  days = 0
-  for symbol in symbols:
-    for index, row in trades.iterrows():
-        if ((trades.loc[index, symbol] != (np.NaN)) and (trades.loc[index, symbol] != (0))):
-            days = 0
-        days += 1
-        if days == 5:
-            print('5 days since trade... bailing at ' + str(index))
-            trades.loc[index, symbol] = 0
-
-  print(trades.to_string())
-  #exit_df = trades.rolling(window_size).any()
-  #trades[(exit_df == False)] = 0
-  #print(exit_df)
+  trades[(macd < signal) & (bbp > 0.5)] = 0
 
   # We now have -100, 0, or +100 TARGET SHARES on all days that "we care about".  (i.e. those
   # days when our strategy tells us something)  All other days are NaN, meaning "hold whatever
@@ -127,10 +112,10 @@ def build_trades (symbols, start_date, end_date, window_size):
 ### Main function.  Not called if imported elsewhere as a module.
 if __name__ == "__main__":
 
-  start_date = '2018-01-01'
-  end_date = '2019-12-31'
+  start_date = '2008-01-01'
+  end_date = '2009-12-31'
   symbols = ['DIS']
-  window_size = 7
+  window_size = 14
 
   build_trades(symbols, start_date, end_date, window_size)
   pval_df = assess_strategy()
