@@ -81,10 +81,30 @@ def build_trades (symbols, start_date, end_date, window_size):
   # But we can at least drop the SPY column.
 #   del trades['SPY']
 #   symbols.remove('SPY')
+  buy_y = []
+  sell_y = []
+  for day in trades.index:
+    for sym in symbols:
+      if trades.loc[day,sym] == 0:
+        buy_y.append(np.nan)
+        sell_y.append(np.nan)
+      elif trades.loc[day,sym] > 0:
+        buy_y.append(prices.loc[day,sym])
+        sell_y.append(np.nan)
+      elif trades.loc[day,sym] < 0:
+        sell_y.append(prices.loc[day,sym])
+        buy_y.append(np.nan)
 
+  print(trades.to_string())
+  price_cols = list(prices)
+  stock = price_cols[0]
+  plt.plot(prices[stock])
+  plt.plot(prices.index, buy_y, marker = '^', color = 'green', markersize = 5, label = 'BUY SIGNAL', linewidth = 0)
+  plt.plot(prices.index, sell_y, marker = 'v', color = 'r', markersize = 5, label = 'SELL SIGNAL', linewidth = 0)
+  plt.savefig('buy&sell')
   # And more importantly, drop all rows with no non-zero values (i.e. no trades).
   trades = trades.loc[(trades != 0).any(axis=1)]
-
+  
   # Now we have only the days that have trades.  That's better, at least!
 
 
@@ -108,12 +128,14 @@ def build_trades (symbols, start_date, end_date, window_size):
   print(trade_df)
   trade_df.to_csv('trades.csv')
 
+  
+
 
 ### Main function.  Not called if imported elsewhere as a module.
 if __name__ == "__main__":
 
-  start_date = '2008-01-01'
-  end_date = '2009-12-31'
+  start_date = '2018-01-01'
+  end_date = '2019-12-31'
   symbols = ['DIS']
   window_size = 14
 
