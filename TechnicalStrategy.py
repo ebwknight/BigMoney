@@ -52,11 +52,11 @@ def build_trades (symbols, start_date, end_date, window_size):
   # Apply our entry order conditions all at once.  This represents our TARGET SHARES
   # at this moment in time, not an actual order.
 
-  trades[(macd > signal) & (bbp < 0.25)] = 100
-  #trades[(sma > 1.05) & (bbp > 1) & (rsi > 70) & (spy_rsi < 70)] = -100
+  trades[(macd > signal)] = 1000
+  trades[(macd < signal)] = -1000
 
 # Apply our exit order conditions all at once.  Again, this represents TARGET SHARES.
-  trades[(macd < signal) & (bbp > 0.5)] = 0
+  trades[(bbp > 0.3) & (rsi > 50)] = 0
 
   # We now have -100, 0, or +100 TARGET SHARES on all days that "we care about".  (i.e. those
   # days when our strategy tells us something)  All other days are NaN, meaning "hold whatever
