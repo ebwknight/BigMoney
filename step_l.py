@@ -103,7 +103,8 @@ def build_trades (symbols, start_date, end_date, lookback):
   trades.iloc[0] = 0
 
   # And now we have our trades array, just as we wanted it, with no iteration.
-
+  print(trades)
+  print(trades.cumsum(axis=1).to_string())
 
   # It would be hard to vectorize our weird formatting output, which triggers on individual
   # elements and needs the index values (row and column).

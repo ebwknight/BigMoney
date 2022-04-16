@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from readData import get_data
 
 
-def assess_portfolio (portfolio, starting_value=1000000, risk_free_rate=0.0,
+def assess_portfolio (portfolio, starting_value=200000, risk_free_rate=0.0,
                       sample_freq=252, plot_returns=False):
 
     cumulative_return = ((portfolio.iloc[-1]) / starting_value) - 1

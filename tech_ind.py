@@ -2,7 +2,6 @@ import numpy as np
 import datetime
 import pandas as pd
 import matplotlib.pyplot as plt
-from sympy import symbols
 from readData import get_data
 
 def SMA(start_date, end_date, prices, window_size):
